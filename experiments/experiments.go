@@ -14,6 +14,7 @@ var (
 		"resolve-commit-after-checkout": {},
 		"descending-spawn-priority":     {},
 		"inbuilt-status-page":           {},
+		"leader-api": 					 {},
 	}
 
 	experiments = make(map[string]bool, len(Available))

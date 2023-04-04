@@ -760,6 +760,17 @@ var AgentStartCommand = cli.Command{
 		if _, has := tracetools.ValidTracingBackends[cfg.TracingBackend]; !has {
 			l.Fatal("The given tracing backend %q is not supported. Valid backends are: %q", cfg.TracingBackend, maps.Keys(tracetools.ValidTracingBackends))
 		}
+		
+		if experiments.IsEnabled("leader-api") {
+			// Try to be the leader - no worries if not.
+			leaderSvr, err := agent.NewLeaderServer()
+			if err != nil {
+				l.Warn("Couldn't become leader: %v", err)
+			}
+			if leaderSvr != nil {
+				defer leaderSvr.Shutdown(ctx)
+			}
+		}
 
 		// AgentConfiguration is the runtime configuration for an agent
 		agentConf := agent.AgentConfiguration{
