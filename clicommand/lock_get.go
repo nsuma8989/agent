@@ -38,7 +38,7 @@ var LockGetCommand = cli.Command{
 	Name:        "get",
 	Usage:       "Gets a lock value from the agent leader",
 	Description: lockGetHelpDescription,
-	Action: lockGetAction,
+	Action:      lockGetAction,
 }
 
 func lockGetAction(c *cli.Context) error {
@@ -53,13 +53,13 @@ func lockGetAction(c *cli.Context) error {
 		fmt.Fprintf(c.App.ErrWriter, lockClientErrMessage, err)
 		os.Exit(1)
 	}
-	
+
 	v, err := cli.Get(key)
 	if err != nil {
 		fmt.Fprintf(c.App.ErrWriter, "Error from leader client: %v\n", err)
 		os.Exit(1)
 	}
-	
+
 	fmt.Fprintln(c.App.Writer, v)
 	return nil
 }

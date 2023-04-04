@@ -30,7 +30,7 @@ var LockReleaseCommand = cli.Command{
 	Name:        "release",
 	Usage:       "Releases a previously-acquired lock",
 	Description: lockReleaseHelpDescription,
-	Action: lockReleaseAction,
+	Action:      lockReleaseAction,
 }
 
 func lockReleaseAction(c *cli.Context) error {
@@ -39,19 +39,19 @@ func lockReleaseAction(c *cli.Context) error {
 		os.Exit(1)
 	}
 	key := c.Args()[0]
-	
+
 	cli, err := agent.NewLeaderClient()
 	if err != nil {
 		fmt.Fprintf(c.App.ErrWriter, lockClientErrMessage, err)
 		os.Exit(1)
 	}
-	
+
 	done, err := cli.CompareAndSwap(key, "1", "")
 	if err != nil {
 		fmt.Fprintf(c.App.ErrWriter, "Error performing compare-and-swap: %v\n", err)
 		os.Exit(1)
 	}
-	
+
 	if !done {
 		fmt.Fprintln(c.App.ErrWriter, "Lock in invalid state to release - investigate with 'lock get'")
 		os.Exit(1)

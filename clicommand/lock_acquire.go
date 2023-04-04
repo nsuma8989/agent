@@ -33,7 +33,7 @@ var LockAcquireCommand = cli.Command{
 	Name:        "acquire",
 	Usage:       "Acquires a lock from the agent leader",
 	Description: lockAcquireHelpDescription,
-	Action: lockAcquireAction,
+	Action:      lockAcquireAction,
 }
 
 func lockAcquireAction(c *cli.Context) error {
@@ -42,23 +42,23 @@ func lockAcquireAction(c *cli.Context) error {
 		os.Exit(1)
 	}
 	key := c.Args()[0]
-	
+
 	cli, err := agent.NewLeaderClient()
 	if err != nil {
 		fmt.Fprintf(c.App.ErrWriter, lockClientErrMessage, err)
 		os.Exit(1)
 	}
-	
+
 	for {
 		done, err := cli.CompareAndSwap(key, "", "1")
 		if err != nil {
 			fmt.Fprintf(c.App.ErrWriter, "Error performing compare-and-swap: %v\n", err)
 			os.Exit(1)
 		}
-		
+
 		if done {
 			return nil
 		}
-		time.Sleep(100*time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 	}
 }

@@ -19,9 +19,9 @@ const LeaderSocketPath = ".buildkite-agent/agent-leader-sock"
 // LeaderServer hosts the singleton Unix domain socket used for implementing
 // the locking API.
 type LeaderServer struct {
-	mu sync.Mutex
+	mu    sync.Mutex
 	locks map[string]string
-	svr *http.Server
+	svr   *http.Server
 }
 
 // NewLeaderServer listens on the leader socket. Since the leader is the first
@@ -34,11 +34,11 @@ func NewLeaderServer() (*LeaderServer, error) {
 	svr := &http.Server{}
 	s := &LeaderServer{
 		locks: make(map[string]string),
-		svr: svr,
+		svr:   svr,
 	}
 	svr.Handler = s
 	go svr.Serve(ln)
-	return s, nil 
+	return s, nil
 }
 
 // Shutdown calls Shutdown on the inner HTTP server, which closes the socket.
@@ -65,7 +65,7 @@ func (s *LeaderServer) cas(key, old, new string) bool {
 // ServeHTTP serves the leader socket API.
 func (s *LeaderServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s %s", r.Method, r.URL)
-	
+
 	if r.URL.Path != "/api/leader/v0/lock" {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
@@ -78,7 +78,7 @@ func (s *LeaderServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.Write([]byte(s.load(key)))
-	
+
 	case http.MethodPatch:
 		key, old, new := r.FormValue("key"), r.FormValue("old"), r.FormValue("new")
 		if key == "" {
@@ -90,7 +90,7 @@ func (s *LeaderServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		} else {
 			w.WriteHeader(http.StatusNotModified)
 		}
-	
+
 	default:
 		http.Error(w, "unsupported method", http.StatusMethodNotAllowed)
 	}
@@ -115,14 +115,14 @@ func NewLeaderClient() (*LeaderClient, error) {
 			return nil, fmt.Errorf("%q is not a socket", LeaderSocketPath)
 		}
 	}
-	
+
 	// Try to connect to the socket.
 	test, err := net.Dial("unix", LeaderSocketPath)
 	if err != nil {
 		return nil, fmt.Errorf("socket test connection: %w", err)
 	}
 	test.Close()
-	
+
 	dialer := net.Dialer{}
 	return &LeaderClient{
 		cli: &http.Client{
@@ -145,7 +145,7 @@ func (c *LeaderClient) Get(key string) (string, error) {
 	q := u.Query()
 	q.Set("key", key)
 	u.RawQuery = q.Encode()
-	
+
 	resp, err := c.cli.Get(u.String())
 	if err != nil {
 		return "", err
@@ -176,12 +176,12 @@ func (c *LeaderClient) CompareAndSwap(key, old, new string) (bool, error) {
 	q.Set("old", old)
 	q.Set("new", new)
 	u.RawQuery = q.Encode()
-	
+
 	req, err := http.NewRequest(http.MethodPatch, u.String(), nil)
 	if err != nil {
 		return false, err
 	}
-	
+
 	resp, err := c.cli.Do(req)
 	if err != nil {
 		return false, err
@@ -189,10 +189,10 @@ func (c *LeaderClient) CompareAndSwap(key, old, new string) (bool, error) {
 	switch resp.StatusCode {
 	case http.StatusNoContent:
 		return true, nil
-		
+
 	case http.StatusNotModified:
 		return false, nil
-		
+
 	default:
 		b, err := io.ReadAll(resp.Body)
 		if err != nil {

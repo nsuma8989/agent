@@ -760,7 +760,7 @@ var AgentStartCommand = cli.Command{
 		if _, has := tracetools.ValidTracingBackends[cfg.TracingBackend]; !has {
 			l.Fatal("The given tracing backend %q is not supported. Valid backends are: %q", cfg.TracingBackend, maps.Keys(tracetools.ValidTracingBackends))
 		}
-		
+
 		if experiments.IsEnabled("leader-api") {
 			// Try to be the leader - no worries if not.
 			leaderSvr, err := agent.NewLeaderServer()
