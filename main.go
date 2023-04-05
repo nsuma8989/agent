@@ -98,6 +98,8 @@ func main() {
 			Usage: "Process lock subcommands",
 			Subcommands: []cli.Command{
 				clicommand.LockAcquireCommand,
+				clicommand.LockDoCommand,
+				clicommand.LockDoneCommand,
 				clicommand.LockGetCommand,
 				clicommand.LockReleaseCommand,
 			},

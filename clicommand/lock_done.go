@@ -19,7 +19,7 @@ Description:
 Examples:
 
    #!/bin/bash
-   if buildkite-agent lock do llama ; then
+   if [ $(buildkite-agent lock do llama) = 'do' ] ; then
 	  setup_code()
 	  buildkite-agent lock done llama
    fi
@@ -30,8 +30,8 @@ Examples:
 type LockDoneConfig struct{}
 
 var LockDoneCommand = cli.Command{
-	Name:        "release",
-	Usage:       "Releases a previously-acquired lock",
+	Name:        "done",
+	Usage:       "Completes a do-once lock",
 	Description: lockDoneHelpDescription,
 	Action:      lockDoneAction,
 }

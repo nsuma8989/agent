@@ -20,15 +20,16 @@ Description:
    
    ′lock do′ will do one of two things:
    
-   - Exit 0 immediately. The calling process should proceed to do the work.
-   - Wait until the work is marked as done (with ′lock done′) and exit 1.
+   - Print 'do'. The calling process should proceed to do the work and then
+     call ′lock done′.
+   - Wait until the work is marked as done (with ′lock done′) and print 'done'.
    
-   If ′lock do′ exits with 1 immediately, the work was already done.
+   If ′lock do′ prints 'done' immediately, the work was already done.
 
 Examples:
 
    #!/bin/bash
-   if buildkite-agent lock do llama ; then
+   if [ $(buildkite-agent lock do llama) = 'do' ] ; then
       setup_code()
       buildkite-agent lock done llama
    fi
@@ -74,17 +75,20 @@ func lockDoAction(c *cli.Context) error {
 			}
 			if done {
 				// Lock acquired, exit 0.
+				fmt.Fprintln(c.App.Writer, "do")
 				return nil
 			}
-			// Lock not acquired. Go through the loop again.
+			// Lock not acquired (perhaps something else acquired it). 
+			// Go through the loop again.
 			
 		case "1":
 			// Work in progress - wait until state 2.
 			time.Sleep(100 * time.Millisecond)
 			
 		case "2":
-			// Work completed.
-			os.Exit(1)
+			// Work completed!
+			fmt.Fprintln(c.App.Writer, "done")
+			return nil
 			
 		default:
 			// Invalid state.
