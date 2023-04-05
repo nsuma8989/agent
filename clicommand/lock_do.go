@@ -68,7 +68,7 @@ func lockDoAction(c *cli.Context) error {
 		switch state {
 		case "":
 			// Try to acquire the lock by changing to state 1
-			done, err := cli.CompareAndSwap(key, "", "1")
+			done, err := cli.CompareAndSwap(key, "", "doing")
 			if err != nil {
 				fmt.Fprintf(c.App.ErrWriter, "Error performing compare-and-swap: %v\n", err)
 				os.Exit(1)
@@ -81,11 +81,11 @@ func lockDoAction(c *cli.Context) error {
 			// Lock not acquired (perhaps something else acquired it). 
 			// Go through the loop again.
 			
-		case "1":
+		case "doing":
 			// Work in progress - wait until state 2.
 			time.Sleep(100 * time.Millisecond)
 			
-		case "2":
+		case "done":
 			// Work completed!
 			fmt.Fprintln(c.App.Writer, "done")
 			return nil

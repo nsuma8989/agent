@@ -49,7 +49,7 @@ func lockDoneAction(c *cli.Context) error {
 		os.Exit(1)
 	}
 
-	done, err := cli.CompareAndSwap(key, "1", "2")
+	done, err := cli.CompareAndSwap(key, "doing", "done")
 	if err != nil {
 		fmt.Fprintf(c.App.ErrWriter, "Error performing compare-and-swap: %v\n", err)
 		os.Exit(1)
