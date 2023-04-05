@@ -38,7 +38,7 @@ var LockAcquireCommand = cli.Command{
 
 func lockAcquireAction(c *cli.Context) error {
 	if c.NArg() != 1 {
-		fmt.Fprint(c.App.ErrWriter, lockGetHelpDescription)
+		fmt.Fprint(c.App.ErrWriter, lockAcquireHelpDescription)
 		os.Exit(1)
 	}
 	key := c.Args()[0]

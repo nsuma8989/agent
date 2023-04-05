@@ -35,7 +35,7 @@ var LockReleaseCommand = cli.Command{
 
 func lockReleaseAction(c *cli.Context) error {
 	if c.NArg() != 1 {
-		fmt.Fprint(c.App.ErrWriter, lockGetHelpDescription)
+		fmt.Fprint(c.App.ErrWriter, lockReleaseHelpDescription)
 		os.Exit(1)
 	}
 	key := c.Args()[0]
