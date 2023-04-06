@@ -64,7 +64,7 @@ func lockDoAction(c *cli.Context) error {
 			fmt.Fprintf(c.App.ErrWriter, "Error performing get: %v\n", err)
 			os.Exit(1)
 		}
-		
+
 		switch state {
 		case "":
 			// Try to acquire the lock by changing to state 1
@@ -78,23 +78,23 @@ func lockDoAction(c *cli.Context) error {
 				fmt.Fprintln(c.App.Writer, "do")
 				return nil
 			}
-			// Lock not acquired (perhaps something else acquired it). 
+			// Lock not acquired (perhaps something else acquired it).
 			// Go through the loop again.
-			
+
 		case "doing":
 			// Work in progress - wait until state 2.
 			time.Sleep(100 * time.Millisecond)
-			
+
 		case "done":
 			// Work completed!
 			fmt.Fprintln(c.App.Writer, "done")
 			return nil
-			
+
 		default:
 			// Invalid state.
 			fmt.Fprintln(c.App.ErrWriter, "Lock in invalid state for do-once - investigate with 'lock get'")
 			os.Exit(1)
 		}
-		
+
 	}
 }
